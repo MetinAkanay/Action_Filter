@@ -1,4 +1,4 @@
-using Action_Filter.ActionFilter;
+ï»¿using Action_Filter.ActionFilter;
 using Action_Filter.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,35 +9,31 @@ namespace Action_Filter.Controllers
     [AutorizeActionFilter]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         
-        public AuthContext _authContext;
+        public AuthContext _context;
         
         public HomeController(AuthContext context)
         {
-            _authContext = context;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-
-            var result = _authContext.Authentications.Where(s => s.Id == 1).FirstOrDefault();
-
             return View();
         }
 
         public IActionResult Login(UserAuthModel model)
         {
-            // Ekrandan gelen veriler ile database'deki verilere göre kullanýcý giriþ mekanizmasý
-            var usermodel = _authContext.Authentications.Include(k=>k.Autorizations).Where(s => s.Username == model.Username && s.Password == model.Password).FirstOrDefault();
+            // Ekrandan gelen veriler ile database'deki verilere gÃ¶re kullanÄ±cÄ± giriÅŸ mekanizmasÄ±
+            var usermodel = _context.Authentications.Include(k=>k.Autorizations).Where(s => s.Username == model.Username && s.Password == model.Password).FirstOrDefault();
 
             if(usermodel != null)
             {
-                var Controller = usermodel.Autorizations.Select(s => s.Controller).FirstOrDefault();
-                var Action = usermodel.Autorizations.Select(s => s.Action).FirstOrDefault();
+                var controller = usermodel.Autorizations.Select(s => s.Controller).FirstOrDefault();
+                var action = usermodel.Autorizations.Select(s => s.Action).FirstOrDefault();
 
-                HttpContext.Session.SetString("Controller", Controller);
-                HttpContext.Session.SetString("Action", Action);
+                HttpContext.Session.SetString("controller", controller);
+                HttpContext.Session.SetString("action", action);
 
                 return View("Login");
             }
@@ -58,7 +54,7 @@ namespace Action_Filter.Controllers
 
         public IActionResult Error()
         {
-            return View();
+            return View("Error");
         }
 
     }

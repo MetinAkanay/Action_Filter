@@ -10,18 +10,26 @@ namespace Action_Filter.ActionFilter
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             // Girilen action ve controlleri bulalım
-            string controller = context.RouteData.Values["Controller"].ToString();
-            string action = context.RouteData.Values["Action"].ToString();
+            string controller = context.RouteData.Values["controller"].ToString();
+            string action = context.RouteData.Values["action"].ToString();
 
             // Sessiondan değerleri alalım
             if(context.HttpContext.Session.Keys.Count() != 0) { 
-                string sessionController = context.HttpContext.Session.GetString("Controller");
-                string sessionAction = context.HttpContext.Session.GetString("Action");
+                string sessionController = context.HttpContext.Session.GetString("controller");
+                string sessionAction = context.HttpContext.Session.GetString("action");
 
                 if (sessionAction != action || sessionController != controller)
                 {
-                    var controllerbase = (HomeController)context.Controller;
-                    context.Result = controllerbase.RedirectToAction("Error","Home");
+                    if(controller == "Home" && action == "Error")
+                    {
+
+                    }
+                    else
+                    {
+                        var controllerbase = (HomeController)context.Controller;
+                        context.Result = controllerbase.RedirectToAction("Error","Home");
+                    }
+                    
                 }
             }
         }
